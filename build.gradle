@@ -1,0 +1,43 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath "io.qameta.allure:allure-gradle:2.8.1"
+    }
+}
+
+apply plugin: "java"
+apply plugin: "io.qameta.allure"
+
+group 'org.travetest.apptest'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://repository.gdplabs.id/artifactory/gl-commons"
+    }
+}
+
+dependencies {
+    compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
+    compile group: 'io.appium', name: 'java-client', version: '7.3.0'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.12'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+    testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.6.1'
+    testCompile group: 'io.qameta.allure', name: 'allure-junit4', version: '2.13.2'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile 'org.assertj:assertj-core:3.11.1'
+
+}
