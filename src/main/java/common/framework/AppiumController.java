@@ -32,6 +32,7 @@ public class AppiumController {
         desiredCapabilities.setCapability(APP_PACKAGE_KEY, configuration.getProperty(APP_PACKAGE_PROPS_KEY));
         desiredCapabilities.setCapability(APP_ACTIVITY_KEY, configuration.getProperty(APP_ACTIVITY_PROPS_KEY));
         desiredCapabilities.setCapability("noReset", true);
+        desiredCapabilities.setCapability("uiautomator2ServerInstallTimeout", 120000);
 
         URL remoteUrl = new URL(configuration.getProperty(APPIUM_REMOTE_URL_PROPS_KEY));
         driver = new AndroidDriver(remoteUrl, desiredCapabilities);

@@ -8,6 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -52,20 +57,6 @@ public class SampleTest extends AppiumController {
         driver.quit();
     }
 
-    //@Test
-    //@DisplayName("Verify Home Page")
-    //@Feature("Homepage")
-    //@Story("Homepage is displayed")
-    //@Description("User access homepage")
-    //public void homepageDisplayedTest() {
-    //    try {
-    //        logger.info("Start executing homepageDisplayedTest.");
-    //        logger.info("Done executing homepageDisplayedTest.");
-    //    } catch (Exception exc) {
-    //        logger.error("Error in executing homepageDisplayedTest.", exc);
-    //    }
-    //}
-
     @Test
     @DisplayName("Verify Click Flight Button")
     @Feature("Homepage")
@@ -81,11 +72,12 @@ public class SampleTest extends AppiumController {
 
             homepage.clickFlightIcon();
             Assert.assertTrue(flightPage.isDisplayed());
+
             getScreenshot("Flight Page");
 
-            //flightPage.setFlight("Jakarta", "Surabaya");
-            //flightPage.setWheels("1", "1", "1");  // todo
-            //flightPage.setSeatClass(0);
+            flightPage.setFlight("Jakarta", "Surabaya");
+            //flightPage.setWheels("1", "1", "1");
+            flightPage.setSeatClass(0);
             flightPage.searchForFlight();
 
             Assert.assertTrue(flightSearchResultPage.isDisplayed());
@@ -98,15 +90,17 @@ public class SampleTest extends AppiumController {
 
             Assert.assertTrue(fillDetailsPage.isDisplayed());
             getScreenshot("Fill In Details");
-            List<Traveler> travelers = Stream.of(new Traveler("Mr", "Jimmy Hendrix")).collect(Collectors.toList());
+            List<Traveler> travelers = Stream.of(new Traveler("Mr.", "Jimmy Hendrix")).collect(Collectors.toList());
             List<Children> children = Stream.of(
-                new Children("Ms", "adelyn rihana", "Mar 02, 2010"),
-                new Children("Mr", "ray marco", "Apr 10, 2019")
+                new Children("Ms.", "adelyn rihana", "2 March 2010"),
+                new Children("Mr.", "ray marco", "10 April 2019")
                 ).collect(Collectors.toList());
             fillDetailsPage.fillForm(
                 new Contact("Jidapa Ornec", "+62", "81234314123", "JidapaOrc3241321@gmail.com"),
                 travelers, children
             );
+
+            getScreenshot("Finish");
 
             logger.info("Done executing flightButtonCLickedTest.");
         } catch (Exception exc) {

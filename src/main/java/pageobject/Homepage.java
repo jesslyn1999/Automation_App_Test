@@ -24,4 +24,8 @@ public class Homepage extends InitPage {
         flightIconElement = iconElements.findElementsByClassName("android.view.View").get(0);
         flightIconElement.click();
     }
+
+    public void scroll() {
+        scrollToElement("new UiSelector().textContains(\"Leave Calendar 2020\")");
+    }
 }

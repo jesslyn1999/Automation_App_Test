@@ -1,5 +1,10 @@
 package pageobject;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,8 +27,9 @@ public class FillDetailsPage extends InitPage {
     @AndroidFindBy(id = "com.traveloka.android:id/text_view_see_below_view")
     private AndroidElement continueButton;
 
-    @AndroidFindBy(id = "com.traveloka.android:id/button_continue")
-    private AndroidElement continueButton2;
+    @AndroidFindBy(id = "com.traveloka.android:id/text_view_simple_add_ons_title")
+    private AndroidElement freqAdded;
+
 
     public FillDetailsPage(AndroidDriver driver) {
         super(driver);
@@ -34,13 +40,9 @@ public class FillDetailsPage extends InitPage {
     }
 
     public void fillForm(Contact contact, List<Traveler> travelers, List<Children> children) {
-        //setContactDetails(contact);
+        setContactDetails(contact);
         setTravelerDetails(travelers, children);
         continueButton.click();
-        continueButton2.click();
-        MobileElement verifContinueElmnt =
-            (MobileElement) driver.findElementById("com.traveloka.android:id/widget_button_blue");
-        waitUntilPageLoaded(verifContinueElmnt);
     }
 
     private void setContactDetails(Contact contact) {
@@ -63,40 +65,50 @@ public class FillDetailsPage extends InitPage {
     }
 
     private void setTravelerDetails(List<Traveler> travelers, List<Children> children) {
-        scrollToElement("new UiSelector().resourceId(\"" + continueButton.getId() + "\").index(6)");
+        try {
+            scrollToElement("new UiSelector().resourceId(\"" + travelerDetailsSection.getId() + "\")");
+        } catch (Exception exc) { }
         waitUntilPageLoaded(travelerDetailsSection);
-        System.out.println("AHAAA Scroll finished");
         List<MobileElement> travelerForms =
-            travelerDetailsSection.findElementsByClassName("android.widget.FrameLayout");
+            travelerDetailsSection.findElementsByXPath("//*[@content-desc=\"trip_booking_view_traveleremptycontainer\"]");
         List<Children> temp = travelers.stream().map(Children::new).collect(Collectors.toList());
         children.addAll(0, temp);
 
-        MobileElement form = (MobileElement) driver.findElementById("com.traveloka.android:id/layout_view_description");
-        MobileElement saveButton = (MobileElement) driver.findElementById("com.traveloka.android:id/button_save");
+        for (int i = 0; i < children.size(); i++) {
+            travelerForms.get(0).click();
 
-        for (int i = 0; i < travelerForms.size(); i++) {
-            travelerForms.get(i).click();
+            MobileElement form = (MobileElement) driver.findElementById("com.traveloka.android:id/layout_view_description");
+            MobileElement saveButton = (MobileElement) driver.findElementById("com.traveloka.android:id/button_save");
+
             waitUntilPageLoaded(form);
 
             MobileElement titleElmt =
-                (MobileElement) travelerForms.get(i).findElementByClassName("android.widget.Spinner");
+                (MobileElement) driver.findElementByClassName("android.widget.Spinner");
             List<MobileElement> editTextElmnts =
-                travelerForms.get(i).findElementsByClassName("android.widget.EditText");
+                driver.findElementsByClassName("android.widget.EditText");
             MobileElement fullNameElmt = editTextElmnts.get(0);
 
             titleElmt.click();
-            driver.findElementByXPath("//*[@title=\"" + children.get(i).getTitle() + "\"]").click();
+            driver.findElementByAndroidUIAutomator(".textContains(\""+ children.get(i).getTitle() +"\")").click();
             fullNameElmt.clear();
             fullNameElmt.sendKeys(children.get(i).getFullName());
 
             if (i >= travelers.size()) {
                 MobileElement dateOfBirthElmt = editTextElmnts.get(1);
-                dateOfBirthElmt.clear();
-                dateOfBirthElmt.sendKeys(children.get(i).getDateOfBirth());
+                dateOfBirthElmt.click();
+                MobileElement buttonOK = (MobileElement) driver.findElementById("android:id/button1");
+                //dateOfBirthElmt.sendKeys(children.get(i).getDateOfBirth());
+                buttonOK.click();
             }
 
             saveButton.click();
-            waitUntilPageLoaded(travelerForms.get(i));
+
+            waitUntilPageLoaded(travelerDetailsSection);
+            try {
+                scrollToElement("new UiSelector().resourceId(\"" + travelerDetailsSection.getId() + "\")");
+            } catch (Exception exc) { }
+            travelerForms =
+                travelerDetailsSection.findElementsByXPath("//*[@content-desc=\"trip_booking_view_traveleremptycontainer\"]");
         }
     }
 }
