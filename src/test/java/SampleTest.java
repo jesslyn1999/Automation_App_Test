@@ -45,6 +45,7 @@ public class SampleTest extends AppiumController {
     @Before
     public void setUp() throws Exception {
         startAppium();
+        driver.startRecordingScreen();
         homepage = new Homepage(driver);
         flightPage = new FlightPage(driver);
         flightSearchResultPage = new FlightSearchResultPage(driver);
@@ -54,6 +55,7 @@ public class SampleTest extends AppiumController {
 
     @After
     public void tearDown() {
+        driver.stopRecordingScreen();
         driver.quit();
     }
 
